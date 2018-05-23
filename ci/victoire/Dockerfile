@@ -8,21 +8,22 @@ RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
-        libpng12-dev \
-    && docker-php-ext-install -j$(nproc) iconv mcrypt bcmath mbstring \
-    && docker-php-ext-configure intl \
+        libpng-dev \
+        libicu-dev
+RUN docker-php-ext-install -j$(nproc) iconv mcrypt bcmath \
+    && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install exif
 
-RUN apt-get update && apt-get install mysql-server mysql-client libmysqlclient18 mysql-common nodejs npm nodejs-legacy vim ruby-full git \
-    xvfb iceweasel default-jdk elasticsearch redis-server perl pwgen zip unzip libsqlite3-dev curl rabbitmq-server libxml2-dev phpunit -yqq && \
-    apt-get clean
-
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
   && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
   && rm "node-v$NODE_VERSION-linux-x64.tar.gz"
+
+RUN apt-get update && apt-get install build-essential libssl-dev mysql-server mysql-client mysql-common nodejs nodejs-legacy vim ruby-full git \
+    xvfb iceweasel default-jre default-jdk redis-server perl pwgen zip unzip libsqlite3-dev curl rabbitmq-server libxml2-dev -yqq && \
+    apt-get clean
 
 RUN npm install -g bower less gulp grunt
 # runs node.js as a background service
